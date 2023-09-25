@@ -8,8 +8,9 @@ import {
   WsResponse,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { LobbyCreateDto } from 'src/lobby/lobby.dto';
+import { LobbyCreateDto, LobbyJoinDto } from 'src/lobby/lobby.dto';
 import { LobbyManager } from 'src/lobby/lobby.manager';
+import { CLIENT_EVENTS } from 'src/shared/client';
 
 @WebSocketGateway({
   cors: {
@@ -17,24 +18,25 @@ import { LobbyManager } from 'src/lobby/lobby.manager';
   },
   namespace: 'game',
 })
-// @UsePipes(new ValidationPipe())
+@UsePipes(new ValidationPipe())
 export class GameGateway implements OnGatewayInit, OnGatewayConnection {
   @WebSocketServer() wss: Server;
 
   constructor(private readonly lobbyManager: LobbyManager) {}
 
   afterInit(server: Server) {
-    console.log('Websocket Gateway initialized');
+    this.lobbyManager.server = server;
   }
 
-  handleConnection(client: Socket, ...args: any[]) {}
+  handleConnection(player: Socket, ...args: any[]) {
+    console.log(`player connected : ${player.id}`);
+  }
 
-  @SubscribeMessage('create-lobby')
+  @SubscribeMessage(CLIENT_EVENTS.CREATE_LOBBY)
   onCreateLobby(player: Socket, data: LobbyCreateDto): any {
     // lobby manager creates a lobby
-    const lobby = this.lobbyManager.create(data);
-    console.log('this is the lobby', lobby);
-
+    console.log('creating lobby ....');
+    const lobby = this.lobbyManager.create(player, data);
     return {
       event: 'create-lobby',
       data: {
@@ -43,8 +45,9 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection {
     };
   }
 
-  @SubscribeMessage('create-lobby')
-  onJoinLobby(id: string, player: Socket): any {
-    this.lobbyManager.join(id, player);
+  @SubscribeMessage(CLIENT_EVENTS.JOIN_LOBBY)
+  onJoinLobby(player: Socket,data: LobbyJoinDto): any {
+    console.log("data",data);
+    this.lobbyManager.join(data, player);
   }
 }
