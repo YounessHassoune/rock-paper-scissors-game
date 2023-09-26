@@ -29,7 +29,6 @@ export class LobbyManager {
     if (!lobby) {
       throw new WsException('Lobby doesnt exist');
     }
-
     // check if the lobby is full
     if (lobby.players.size >= lobby.maxPlayers) {
       throw new WsException('Lobby is full');

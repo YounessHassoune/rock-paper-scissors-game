@@ -1,12 +1,29 @@
-import { IsString, IsUUID } from 'class-validator';
+import { IsEnum, IsString, IsUUID } from 'class-validator';
+
+export enum LOBBYMODE {
+  'solo',
+  'duo',
+}
+export enum PLAYERCHOICE {
+  'rock',
+  'paper',
+  'scissors',
+}
 
 export class LobbyCreateDto {
   @IsString()
-  mode: 'solo' | 'duo';
+  @IsEnum(LOBBYMODE)
+  mode: LOBBYMODE;
 }
 
 export class LobbyJoinDto {
   @IsString()
   @IsUUID()
-  id:string;
+  id: string;
+}
+
+export class PlayDto {
+  @IsString()
+  @IsEnum(PLAYERCHOICE)
+  choice: PLAYERCHOICE;
 }

@@ -10,7 +10,7 @@ export class Lobby {
 
   public readonly players: Map<Socket['id'], Socket> = new Map<Socket['id'], Socket>();
 
-  // public readonly gameInstance: GameInstance = new GameInstance(this);
+  public readonly gameInstance: GameInstance = new GameInstance(this);
 
   constructor(
     private readonly server: Server,
@@ -22,9 +22,10 @@ export class Lobby {
       this.players.set(player.id, player);
       player.join(this.id);
       player.data.lobby = this;
-      this.updateLobby(SERVER_EVENTS.LOBBY_UPDATES, this.getLobbystate());
-      // this.gameInstance.start();
+      // when adding player check if lobby is full to start te game
+      if (this.players.size >= this.maxPlayers) this.gameInstance.start();
       // ! we shoul update the dispatch the game state to all  players
+      this.updateLobby(SERVER_EVENTS.LOBBY_UPDATES, this.getLobbystate());
     } catch (e) {
       console.log(e);
     }
@@ -41,6 +42,9 @@ export class Lobby {
       mode: this.maxPlayers === 1 ? 'solo' : 'duo',
       createdAt: this.createdAt,
       playersCount: this.players.size,
+      hasStarted:this.gameInstance.hasStarted,
+      hasFinished:this.gameInstance.hasFinished,
+      currentRound:this.gameInstance.currentRound
     };
   }
 }
