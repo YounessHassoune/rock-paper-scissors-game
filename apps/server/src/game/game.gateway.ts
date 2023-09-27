@@ -62,6 +62,6 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection {
     }
 
     //call the shoot function passing the
-    playerData.lobby.gameInstance.shoot(choice);
+    playerData.lobby.gameInstance.shoot(choice,player);
   }
 }

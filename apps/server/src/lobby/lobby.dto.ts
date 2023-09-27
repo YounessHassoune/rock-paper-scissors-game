@@ -5,9 +5,9 @@ export enum LOBBYMODE {
   'duo',
 }
 export enum PLAYERCHOICE {
-  'rock',
-  'paper',
-  'scissors',
+  'rock'='rock',
+  'paper'='paper',
+  'scissors'='scissors',
 }
 
 export class LobbyCreateDto {
@@ -27,3 +27,16 @@ export class PlayDto {
   @IsEnum(PLAYERCHOICE)
   choice: PLAYERCHOICE;
 }
+
+// export type RoundDetails ={
+//   winner:string,
+//   round:number,
+//   player1:{
+//     id:string
+//   }
+//   player2:
+// }
+
+// export type = {
+
+// }
